@@ -91,6 +91,115 @@ The bot uses the `gemini-2.0-flash-lite` model, which is the most cost-effective
 - [@google/generative-ai](https://www.npmjs.com/package/@google/generative-ai) - Google's Gemini AI interface
 - [dotenv](https://www.npmjs.com/package/dotenv) - Environment variable management
 
+## ☁️ Deploying to Google Cloud
+
+You can host your Discord bot on Google Cloud for reliable 24/7 operation. Here's how to set it up:
+
+### Setting Up Google Cloud
+
+1. Create a [Google Cloud account](https://cloud.google.com/) if you don't have one
+2. Create a new project in the [Google Cloud Console](https://console.cloud.google.com/)
+3. Make sure billing is enabled for your project
+
+### Creating a VM Instance
+
+1. Navigate to Compute Engine > VM Instances
+2. Click "Create Instance"
+3. Configure your VM:
+   - Choose a name for your instance
+   - Select a region close to your Discord server users
+   - Choose machine type (e2-micro is sufficient for a basic bot)
+   - Boot disk: Ubuntu 20.04 or later
+   - Allow HTTP and HTTPS traffic if needed
+   - Click "Create"
+
+### Setting Up the VM
+
+1. Connect to your VM using SSH (click the SSH button in the console)
+2. Update the system:
+   ```bash
+   sudo apt update && sudo apt upgrade -y
+   ```
+3. Install Node.js:
+   ```bash
+   curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+   sudo apt-get install -y nodejs
+   ```
+4. Install Git:
+   ```bash
+   sudo apt install git -y
+   ```
+5. Clone the repository:
+   ```bash
+   git clone https://github.com/RadjaShiqnals/discord-with-ai.git
+   cd discord-with-ai
+   ```
+6. Install dependencies:
+   ```bash
+   npm install
+   ```
+7. Create the `.env` file:
+   ```bash
+   nano .env
+   ```
+8. Add your environment variables:
+   ```
+   DISCORD_BOT_TOKEN="your_discord_bot_token_here"
+   GEMINI_API_KEY="your_gemini_api_key_here"
+   ALLOWED_GUILD_IDS="server_id_1,server_id_2,server_id_3"
+   ```
+
+### Keeping the Bot Running with Systemd
+
+1. Create a systemd service file:
+   ```bash
+   sudo nano /etc/systemd/system/discord-ai-bot.service
+   ```
+2. Add the following configuration:
+   ```ini
+   [Unit]
+   Description=Discord AI Bot
+   After=network.target
+
+   [Service]
+   Type=simple
+   User=YOUR_USERNAME
+   WorkingDirectory=/home/YOUR_USERNAME/discord-with-ai
+   ExecStart=/usr/bin/node index.js
+   Restart=on-failure
+   RestartSec=10
+   StandardOutput=syslog
+   StandardError=syslog
+   SyslogIdentifier=discord-ai-bot
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+   Replace `YOUR_USERNAME` with your actual username
+3. Enable and start the service:
+   ```bash
+   sudo systemctl enable discord-ai-bot
+   sudo systemctl start discord-ai-bot
+   ```
+4. Check the status:
+   ```bash
+   sudo systemctl status discord-ai-bot
+   ```
+
+### Managing Your Bot
+
+- To view logs: `journalctl -u discord-ai-bot`
+- To restart the bot: `sudo systemctl restart discord-ai-bot`
+- To stop the bot: `sudo systemctl stop discord-ai-bot`
+
+### Updating Your Bot
+
+1. SSH into your VM
+2. Navigate to your bot directory: `cd discord-with-ai`
+3. Pull the latest changes: `git pull`
+4. Install any new dependencies: `npm install`
+5. Restart the service: `sudo systemctl restart discord-ai-bot`
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
