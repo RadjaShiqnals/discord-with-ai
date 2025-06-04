@@ -153,7 +153,7 @@ client.on('messageCreate', async message => {
             message.reply('Sorry, I encountered an error trying to answer your question.');
         }
     } else if (command === 'jawa') {
-        message.reply("I am RadjaShiqnals-AI, your helpful bot assistant!");
+        message.reply("Jawa! Jawa! Jawa!");
     }
 });
 
